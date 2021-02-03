@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
@@ -21,9 +20,7 @@ public class Message {
     @NotBlank(message = "Guest name cannot be empty")
     private String message_name;
 
-
     private String message_phone;
-
 
     private String message_subject;
 

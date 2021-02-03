@@ -1,7 +1,7 @@
 package com.example.validator.config;
 
 import com.example.validator.service.StudentService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -12,28 +12,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final StudentService studentService;
-
-    public WebSecurityConfig(StudentService studentService) {
-        this.studentService = studentService;
-    }
-
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/add-student-page","/get-all-message" ,"/add-student", "/edit/*","/delete/*","/processed-message/*").hasAuthority("ADMIN")
-                .antMatchers("/" , "/static/**","/add-message-for-admin").permitAll()
+                .antMatchers("/","/home","/resources/**","/add-message-for-admin","/static/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login")
+                .loginPage("/login").defaultSuccessUrl("/",true)
                 .permitAll()
                 .and()
                 .logout().logoutSuccessUrl("/")

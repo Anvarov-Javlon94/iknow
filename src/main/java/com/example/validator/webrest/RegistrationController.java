@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.Valid;
 
 @Controller
+//@RequestMapping("reg")
 @RequiredArgsConstructor
 public class RegistrationController {
 
@@ -27,20 +28,23 @@ public class RegistrationController {
 
     @PostMapping("/add-student")
     public String addStudent(@RequestParam("password_verify") String password_verify,@ModelAttribute @Valid Student student,BindingResult errors, Model model){
-        if (!errors.hasErrors() && !password_verify.isEmpty()){
-           if (studentService.passwordVerify(student.getPassword(),password_verify)){
-               if (studentService.passwordVerifyLength(student.getPassword())){
-                   studentService.addStudent(student);
-                   model.addAttribute("title", String.format("%s is added",student.getUsername()));
-                   model.addAttribute("students", student);
-               } else {
-                   model.addAttribute("error", "Password is so short");
-               }
-           } else {
-               model.addAttribute("error", "Passwords are different");
-           }
-        }
-        else {
+        if (!errors.hasErrors() && !password_verify.isEmpty()) {
+            if (!studentService.verifyUsernameFromDB(student.getUsername())) {
+                if (studentService.passwordVerify(student.getPassword(), password_verify)) {
+                    if (studentService.passwordVerifyLength(student.getPassword())) {
+                        studentService.addStudent(student);
+                        model.addAttribute("title", String.format("%s is added", student.getUsername()));
+                        model.addAttribute("students", student);
+                    } else {
+                        model.addAttribute("error", "Password is so short");
+                    }
+                } else {
+                    model.addAttribute("error", "Passwords are different");
+                }
+            } else {
+                model.addAttribute("error", "This user is already exist");
+            }
+        } else {
             model.addAttribute("error", "Fields are not full");
         }
         return "add-student";

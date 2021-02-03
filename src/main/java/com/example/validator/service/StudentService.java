@@ -59,12 +59,12 @@ public class StudentService implements UserDetailsService {
     public Map<Student, Result> resultMap(List<Student> students){
         Map<Student, Result> resultMap = new TreeMap<>();
         for (Student student : students){
-            resultMap.put(student, student.getResults().get(0));
+            if (!student.isAdmin()){
+                resultMap.put(student, student.getResults().get(0));
+            }
         }
         return resultMap;
     }
-
-
 
     public Student getStudentById(Long id){
         return studentRepository.getOne(id);
@@ -78,7 +78,6 @@ public class StudentService implements UserDetailsService {
         return name.isEmpty() || surname.isEmpty() || phone.isEmpty();
     }
 
-
     public Student studentProfileEditor(Long id, String surname, String username, String name, String phone) {
         Student  student = studentRepository.getOne(id);
         student.setSurname(surname);
@@ -90,7 +89,10 @@ public class StudentService implements UserDetailsService {
     }
 
     public void deleteStudentById(Long id){
-        studentRepository.deleteById(id);
+    Student student = studentRepository.getOne(id);
+    if (!student.isAdmin()){
+        studentRepository.delete(student);
+    }
     }
 
     public void studentResultEdit(Long id, Integer first, Integer second, Integer third){
@@ -107,14 +109,28 @@ public class StudentService implements UserDetailsService {
         studentRepository.save(student);
     }
 
-    public Map<Student, Result> studentAfterSearch(String searchName){
+    public Map<Student, Result> studentAfterSearch(String searchName1){
+        String searchName = searchName1.toLowerCase();
         List<Student> students = studentRepository.findAll();
         Map<Student, Result> resultMap = new TreeMap<>();
         for (Student student : students){
-            if (student.getName().toLowerCase(Locale.ROOT).contains(searchName) || student.getUsername().toLowerCase(Locale.ROOT).contains(searchName) || student.getSurname().toLowerCase(Locale.ROOT).contains(searchName)){
-                resultMap.put(student, student.getResults().get(0));
+            if (student.getName().toLowerCase().contains(searchName) || student.getUsername().toLowerCase().contains(searchName) || student.getSurname().toLowerCase().contains(searchName)){
+               if (!student.isAdmin()){
+                   resultMap.put(student, student.getResults().get(0));
+               }
             }
         }
         return resultMap;
+    }
+
+
+    public boolean verifyUsernameFromDB(String username) {
+        List<Student> studentList = studentRepository.findAll();
+        for (Student student : studentList){
+            if (student.getUsername().equals(username)){
+                return true;
+            }
+        }
+        return false;
     }
 }

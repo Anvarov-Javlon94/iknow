@@ -5,6 +5,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 @Configuration
 @EnableWebMvc
 public class MvcConfig implements WebMvcConfigurer {
@@ -18,7 +19,11 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry)
     {
-        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/","classpath:/resources/");
+        registry.addResourceHandler("/static/**").addResourceLocations("/static/","classpath:/static/");
+        registry.addResourceHandler("/img/**").addResourceLocations("/static/assets/img/","classpath:/static/assets/img/");
+        registry.addResourceHandler("/static/js/**").addResourceLocations("/static/js/");
+
 
     }
 }

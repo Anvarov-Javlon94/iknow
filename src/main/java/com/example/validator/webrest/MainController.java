@@ -18,14 +18,15 @@ public class MainController {
     private final StudentService studentService;
     private final ResultService resultService;
 
-    @PostMapping("/")
-    public String postIndex(Model model){
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String getIndexPage(Model model){
         model.addAttribute("number", studentService.getAllStudent());
         return "index";
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String getIndexPage(Model model){
+    @PostMapping("/")
+    public String getHomePage(Model model){
         model.addAttribute("number", studentService.getAllStudent());
         return "index";
     }
@@ -68,7 +69,7 @@ public class MainController {
     @GetMapping("/delete/{id}")
     public String deleteStudent(@PathVariable("id") Long id){
         studentService.deleteStudentById(id);
-        return "redirect:/student-list";
+    return "redirect:/student-list";
     }
 
     @GetMapping("/edit/{id}")
